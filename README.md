@@ -1,51 +1,78 @@
 # World Cup 2026 Prediction Pipeline
 
-Pipeline này đọc dataset `International football results from 1872 to 2026`, train các mô hình match-level, rồi chạy Monte Carlo để xuất bảng xác suất World Cup 2026.
+This project trains match-level football models on the **International Football Results from 1872 to 2026** dataset and runs Monte Carlo simulations to estimate outcomes for the 2026 FIFA World Cup.
 
-## Chạy nhanh
+## Quick start
 
 ```powershell
 python main.py --model ensemble --mode pre_tournament --simulations 20000 --output-dir outputs/ensemble_pre
 ```
 
-Các model có thể chọn:
+Available models:
 
-- `elo`: Elo baseline.
-- `dixon-coles`: Poisson goals model với Dixon-Coles low-score correction.
-- `boosted`: XGBoost/LightGBM/CatBoost nếu có, fallback sang sklearn HistGradientBoosting.
-- `xgboost`: ép dùng riêng XGBoost W-D-L model.
-- `catboost`: ép dùng riêng CatBoost W-D-L model.
-- `bayesian`: empirical-Bayes Poisson với shrinkage cho đội ít dữ liệu.
-- `ensemble`: ensemble có calibration từ validation gần nhất; tự include LightGBM, XGBoost và CatBoost nếu package có trong env.
+- `elo`: Elo rating baseline.
+- `dixon-coles`: Poisson goal model with the Dixon-Coles low-score correction.
+- `boosted`: uses XGBoost, LightGBM, or CatBoost when available, with a fallback to scikit-learn's `HistGradientBoosting`.
+- `xgboost`: forces the standalone XGBoost win-draw-loss model.
+- `catboost`: forces the standalone CatBoost win-draw-loss model.
+- `bayesian`: empirical-Bayes Poisson model with shrinkage for teams with limited data.
+- `ensemble`: calibrated ensemble that automatically includes LightGBM, XGBoost, and CatBoost when those packages are available.
 
-## Mode dữ liệu
+## Data modes
 
-- `pre_tournament`: cutoff mặc định `2026-06-10`, bỏ qua toàn bộ kết quả World Cup 2026 dù dataset đã có vài trận.
-- `live`: cutoff mặc định là ngày World Cup 2026 mới nhất đã có score trong dataset, và dùng các kết quả đó khi simulate phần còn lại.
+- `pre_tournament`: uses a default cutoff of `2026-06-10`. Any World Cup 2026 results already present in the dataset are excluded to prevent data leakage.
+- `live`: uses the latest scored World Cup 2026 match in the dataset as the cutoff and includes known results when simulating the remaining tournament.
 
-Ví dụ live:
+Live example:
 
 ```powershell
 python main.py --model ensemble --mode live --simulations 20000 --output-dir outputs/ensemble_live
 ```
 
-XGBoost với CUDA nếu môi trường có GPU/CUDA tương thích:
+XGBoost with CUDA, when the environment has a compatible GPU and CUDA installation:
 
 ```powershell
 python main.py --model xgboost --mode pre_tournament --simulations 20000 --xgboost-device cuda --output-dir outputs/xgboost_cuda_pre
 ```
 
-Thanh tiến trình Monte Carlo dùng `tqdm` mặc định nếu package có sẵn. Thêm `--no-progress` để tắt.
+Monte Carlo progress is displayed with `tqdm` when the package is available. Add `--no-progress` to disable the progress bar.
 
-## Output
+## Ensemble2 pre-tournament results
 
-Mỗi lần chạy sẽ ghi:
+The `outputs/ensemble2_pre` run used:
 
-- `champion_probabilities.csv`: xác suất vô địch.
-- `stage_probabilities.csv`: xác suất vào Round of 32, Round of 16, quarterfinal, semifinal, final, champion.
-- `group_probabilities.csv`: xác suất xếp hạng 1-4 từng bảng.
-- `group_projection.csv`: điểm, bàn thắng, bàn thua, hiệu số kỳ vọng.
-- `match_predictions.csv`: xác suất từng fixture vòng bảng.
-- `metadata.json`: cutoff, số trận train, weights/log-loss của ensemble.
+- 20,000 Monte Carlo simulations.
+- 49,405 historical training matches.
+- A leakage-safe training cutoff of June 10, 2026.
+- Six calibrated components: Elo, Dixon-Coles, Bayesian Poisson, LightGBM, XGBoost, and CatBoost.
 
-Lưu ý: Round-of-32 dùng match slots chính thức; đội hạng ba được gán bằng heuristic backtracking hợp lệ thay vì hardcode toàn bộ 495 tổ hợp Annex C.
+Argentina has the highest estimated championship probability at **18.76%**, followed by Spain at **17.71%** and Brazil at **10.45%**.
+
+### Final champion probabilities
+
+![Top 20 World Cup 2026 champion probabilities from ensemble2_pre](docs/images/ensemble2_pre_champion_probabilities.png)
+
+### Group-stage projection
+
+The projection below ranks every team within its group by expected points across the simulations.
+
+![World Cup 2026 expected group-stage points from ensemble2_pre](docs/images/ensemble2_pre_group_projection.png)
+
+Regenerate both figures from the result CSV files with:
+
+```powershell
+python -B scripts/plot_readme_results.py
+```
+
+## Outputs
+
+Each run writes:
+
+- `champion_probabilities.csv`: probability of winning the tournament.
+- `stage_probabilities.csv`: probability of reaching the Round of 32, Round of 16, quarterfinals, semifinals, final, and winning the tournament.
+- `group_probabilities.csv`: probability of finishing first through fourth in each group.
+- `group_projection.csv`: expected points, goals for, goals against, and goal difference.
+- `match_predictions.csv`: outcome probabilities for each group-stage fixture.
+- `metadata.json`: cutoff details, training sample count, runtime, model backends, ensemble weights, and validation log loss.
+
+The Round of 32 follows the official FIFA match slots. Advancing third-place teams are assigned with a valid backtracking heuristic instead of hard-coding all 495 Annex C combinations.

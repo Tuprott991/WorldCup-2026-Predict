@@ -1,0 +1,39 @@
+{
+  "simulations": 20000,
+  "model": "ensemble",
+  "use_known_results": false,
+  "known_results_cutoff": "2026-06-10",
+  "knockout_note": "Round-of-32 slots follow FIFA match slots; advancing third-place teams are assigned by a valid backtracking heuristic.",
+  "dataset_dir": "D:\\Github Repos\\worldcup_2026_prediction\\dataset",
+  "training_cutoff": "2026-06-10 00:00:00",
+  "training_matches": 49405,
+  "fixture_rows": 72,
+  "mode": "pre_tournament",
+  "train_seconds": 122.167,
+  "simulate_seconds": 273.419,
+  "xgboost_device": "cpu",
+  "ensemble_weights": {
+    "elo": 0.1659612988028407,
+    "dixon_coles": 0.1675715474702932,
+    "bayesian_poisson": 0.15543749240937116,
+    "lightgbm_wdl": 0.17032994271338325,
+    "xgboost_wdl": 0.170803269685491,
+    "catboost_wdl": 0.16989644891862057
+  },
+  "validation_log_loss": {
+    "elo": 0.8812822120123188,
+    "dixon_coles": 0.8728136889905688,
+    "bayesian_poisson": 0.9409489194036114,
+    "lightgbm_wdl": 0.858678974392169,
+    "xgboost_wdl": 0.856299418545785,
+    "catboost_wdl": 0.8608699089847484
+  },
+  "model_backends": {
+    "elo": "elo",
+    "dixon_coles": "dixon_coles",
+    "bayesian_poisson": "bayesian_poisson",
+    "lightgbm_wdl": "lightgbm",
+    "xgboost_wdl": "xgboost",
+    "catboost_wdl": "catboost"
+  }
+}

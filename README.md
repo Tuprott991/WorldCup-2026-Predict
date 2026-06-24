@@ -2,6 +2,18 @@
 
 This project trains match-level football models on the **International Football Results from 1872 to 2026** dataset and runs Monte Carlo simulations to estimate outcomes for the 2026 FIFA World Cup.
 
+
+### Final champion probabilities
+
+![Top 20 World Cup 2026 champion probabilities from ensemble2_pre](docs/images/ensemble2_pre_champion_probabilities.png)
+
+### Group-stage projection
+
+The projection below ranks every team within its group by expected points across the simulations.
+
+![World Cup 2026 expected group-stage points from ensemble2_pre](docs/images/ensemble2_pre_group_projection.png)
+
+
 ## Quick start
 
 ```powershell
@@ -47,16 +59,6 @@ The `outputs/ensemble2_pre` run used:
 - Six calibrated components: Elo, Dixon-Coles, Bayesian Poisson, LightGBM, XGBoost, and CatBoost.
 
 Argentina has the highest estimated championship probability at **18.76%**, followed by Spain at **17.71%** and Brazil at **10.45%**.
-
-### Final champion probabilities
-
-![Top 20 World Cup 2026 champion probabilities from ensemble2_pre](docs/images/ensemble2_pre_champion_probabilities.png)
-
-### Group-stage projection
-
-The projection below ranks every team within its group by expected points across the simulations.
-
-![World Cup 2026 expected group-stage points from ensemble2_pre](docs/images/ensemble2_pre_group_projection.png)
 
 Regenerate both figures from the result CSV files with:
 

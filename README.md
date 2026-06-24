@@ -7,12 +7,17 @@ This project trains match-level football models on the **International Football 
 
 ![Top 20 World Cup 2026 champion probabilities from ensemble2_pre](docs/images/ensemble2_pre_champion_probabilities.png)
 
+### Group-stage match predictions
+
+The chart shows the predicted home-win, draw, and away-win probabilities for all 72 group-stage fixtures in chronological order.
+
+![World Cup 2026 group-stage match predictions from ensemble2_pre](docs/images/ensemble2_pre_match_predictions.png)
+
 ### Group-stage projection
 
 The projection below ranks every team within its group by expected points across the simulations.
 
 ![World Cup 2026 expected group-stage points from ensemble2_pre](docs/images/ensemble2_pre_group_projection.png)
-
 
 ## Quick start
 
@@ -60,7 +65,7 @@ The `outputs/ensemble2_pre` run used:
 
 Argentina has the highest estimated championship probability at **18.76%**, followed by Spain at **17.71%** and Brazil at **10.45%**.
 
-Regenerate both figures from the result CSV files with:
+Regenerate all three figures from the result CSV files with:
 
 ```powershell
 python -B scripts/plot_readme_results.py
